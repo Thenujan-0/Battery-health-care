@@ -27,7 +27,7 @@ tString = """
 
 xDoc = dom.XmlDocument()
 
-def main():
+while True:
     battery = psutil.sensors_battery()
     percent = battery.percent
     psutil.sensors_battery().power_plugged
@@ -42,8 +42,7 @@ def main():
         notifier.show(notification)
         
         time.sleep(60*2)
-        main()
-        
+
 
     elif percent> 98 and psutil.sensors_battery().power_plugged:
         
@@ -54,10 +53,57 @@ def main():
         #display notification
         notifier.show(notification)
         time.sleep(60*2)
-        main()
+        
 
     else:
         time.sleep(60*2)
-        main()
 
-main()
+
+
+from gi.repository import Notify,GdkPixbuf
+from time import sleep, time
+
+import psutil
+battery = psutil.sensors_battery()
+plugged = battery.power_plugged
+percent = str(battery.percent)
+print(plugged)
+percent = float(percent)
+print(percent)
+while True:
+    battery= psutil.sensors_battery()
+    plugged = battery.power_plugged
+    percent = str(battery.percent)
+    percent = float(percent)
+
+    if percent<50 and not plugged:
+        Notify.init("Battery")
+        notification = Notify.Notification.new("Battery low")
+
+        # Use GdkPixbuf to create the proper image type
+        image = GdkPixbuf.Pixbuf.new_from_file("low.ico")
+
+        # Use the GdkPixbuf image
+        notification.set_icon_from_pixbuf(image)
+        notification.set_image_from_pixbuf(image)
+
+        notification.show()
+        sleep(60*2)
+
+    elif percent>98 and plugged:
+        print()
+        Notify.init('Battery')
+        notification =Notify.Notification.new('Battery is almost full')
+
+        # Use GdkPixbuf to create the proper image type
+        image = GdkPixbuf.Pixbuf.new_from_file("full.ico")
+
+        # Use the GdkPixbuf image
+        notification.set_icon_from_pixbuf(image)
+        notification.set_image_from_pixbuf(image)
+
+        # notification.show()
+        sleep(60*5)
+    
+    else:
+        sleep(60*5)
